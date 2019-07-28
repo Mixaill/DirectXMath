@@ -42,18 +42,30 @@ inline bool XMVerifyAVX2Support()
 
     // See http://msdn.microsoft.com/en-us/library/hskdteyh.aspx
     int CPUInfo[4] = {-1};
-    __cpuid( CPUInfo, 0 );
+#if defined(__clang__) || defined(__GNUC__)
+    __cpuid(0, CPUInfo[0], CPUInfo[1], CPUInfo[2], CPUInfo[3]);
+#else
+    __cpuid(CPUInfo, 0);
+#endif
 
     if ( CPUInfo[0] < 7  )
         return false;
 
-    __cpuid(CPUInfo, 1 );
+#if defined(__clang__) || defined(__GNUC__)
+    __cpuid(1, CPUInfo[0], CPUInfo[1], CPUInfo[2], CPUInfo[3]);
+#else
+    __cpuid(CPUInfo, 1);
+#endif
 
     // We check for F16C, FMA3, AVX, OSXSAVE, SSSE4.1, and SSE3
     if ( (CPUInfo[2] & 0x38081001) != 0x38081001 )
         return false;
 
+#if defined(__clang__) || defined(__GNUC__) 
+    __cpuid_count(0, 7, CPUInfo[0], CPUInfo[1], CPUInfo[2], CPUInfo[3]);
+#else
     __cpuidex(CPUInfo, 7, 0);
+#endif
 
     return ( (CPUInfo[1] & 0x20 ) == 0x20 );
 }

@@ -41,18 +41,30 @@ inline bool XMVerifyFMA4Support()
 
    // See http://msdn.microsoft.com/en-us/library/hskdteyh.aspx
    int CPUInfo[4] = {-1};
-   __cpuid( CPUInfo, 0 );
+#if defined(__clang__) || defined(__GNUC__)
+    __cpuid(0, CPUInfo[0], CPUInfo[1], CPUInfo[2], CPUInfo[3]);
+#else
+    __cpuid(CPUInfo, 0);
+#endif
 
    if ( CPUInfo[0] < 1  )
        return false;
 
-    __cpuid(CPUInfo, 1 );
+#if defined(__clang__) || defined(__GNUC__)
+    __cpuid(1, CPUInfo[0], CPUInfo[1], CPUInfo[2], CPUInfo[3]);
+#else
+    __cpuid(CPUInfo, 1);
+#endif
 
     // We check for AVX, OSXSAVE (required to access FMA4)
     if ( (CPUInfo[2] & 0x18000000) != 0x18000000 )
         return false;
 
-    __cpuid( CPUInfo, 0x80000000 );
+#if defined(__clang__) || defined(__GNUC__)
+    __cpuid(0x80000000, CPUInfo[0], CPUInfo[1], CPUInfo[2], CPUInfo[3]);
+#else
+    __cpuid(CPUInfo, 0x80000000);
+#endif
 
     if ( CPUInfo[0] < 0x80000001 )
         return false;
