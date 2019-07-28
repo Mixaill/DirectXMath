@@ -13,7 +13,9 @@
 
 #pragma warning(push)
 #pragma warning(disable : 4987)
+#ifndef __GNUC__
 #include <intrin.h>
+#endif
 #pragma warning(pop)
 
 #if !defined(_M_ARM) && !defined(_M_ARM64) && !defined(__arm__) && !defined(__aarch64__)
