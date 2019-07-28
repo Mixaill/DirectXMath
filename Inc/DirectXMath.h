@@ -164,7 +164,12 @@
 #define XM_ALIGNED_DATA(x) __declspec(align(x))
 #define XM_ALIGNED_STRUCT(x) __declspec(align(x)) struct
 #endif
+
+//__forceinline for gcc
+#if defined(__GNUC__) && !defined(_WIN32)
+#define __forceinline __attribute__((always_inline))
 #endif
+
 
 /****************************************************************************
  *
