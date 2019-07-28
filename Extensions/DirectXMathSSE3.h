@@ -11,7 +11,7 @@
 #pragma once
 #endif
 
-#ifdef _M_ARM
+#if defined(_M_ARM) || defined(__arm__) || defined(__aarch64__)
 #error SSE3 not supported on ARM platform
 #endif
 

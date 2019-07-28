@@ -16,7 +16,7 @@
 #include <intrin.h>
 #pragma warning(pop)
 
-#ifndef _M_ARM
+#if !defined(_M_ARM) && !defined(__arm__) && !defined(__aarch64__)
 #include <tmmintrin.h>
 #endif
 
@@ -56,7 +56,7 @@ inline XMVECTOR XM_CALLCONV XMVectorEndian
 }
 
 
-#ifndef _M_ARM
+#if !defined(_M_ARM) && !defined(__arm__) && !defined(__aarch64__)
 namespace SSSE3
 {
 
@@ -98,6 +98,6 @@ inline XMVECTOR XM_CALLCONV XMVectorEndian
 }
 
 } // namespace SSSE3
-#endif // !_M_ARM
+#endif // !_M_ARM && !__arm__ && !__aarch64__
 
 } // namespace DirectX;
