@@ -17,11 +17,12 @@
 #pragma once
 
 #include <assert.h>
-#include <directxmath.h>
+#include <DirectXMath.h>
 
 #pragma warning(push)
 #pragma warning(disable : 4005 4668)
 #include <stdint.h>
+#include <string.h>
 #pragma warning(pop)
 
 #pragma warning(push)
@@ -37,6 +38,8 @@ namespace XDSP
     inline bool ISPOWEROF2(size_t n) { return ( ((n)&((n)-1)) == 0 && (n) != 0 ); }
 
     // Parallel multiplication of four complex numbers, assuming real and imaginary values are stored in separate vectors.
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wattributes"
     __forceinline void XM_CALLCONV vmulComplex (_Out_ XMVECTOR& rResult, _Out_ XMVECTOR& iResult,
                                                 _In_ FXMVECTOR r1, _In_ FXMVECTOR i1, _In_ FXMVECTOR r2, _In_ GXMVECTOR i2)
     {
@@ -47,7 +50,10 @@ namespace XDSP
 		rResult = XMVectorNegativeMultiplySubtract(i1, i2, vr1r2); // real: (r1*r2 - i1*i2)
 		iResult = XMVectorMultiplyAdd(r2, i1, vr1i2); // imaginary: (r1*i2 + r2*i1)
 	}
+    #pragma GCC diagnostic pop
 
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wattributes"
     __forceinline void XM_CALLCONV vmulComplex (_Inout_ XMVECTOR& r1, _Inout_ XMVECTOR& i1, _In_ FXMVECTOR r2, _In_ FXMVECTOR i2)
     {
         using namespace DirectX;
@@ -57,6 +63,7 @@ namespace XDSP
 		r1 = XMVectorNegativeMultiplySubtract(i1, i2, vr1r2); // real: (r1*r2 - i1*i2)
 		i1 = XMVectorMultiplyAdd(r2, i1, vr1i2); // imaginary: (r1*i2 + r2*i1)
 	}
+    #pragma GCC diagnostic pop
 
     //----------------------------------------------------------------------------------
     // Radix-4 decimation-in-time FFT butterfly.
@@ -88,6 +95,8 @@ namespace XDSP
     //          | 1  0 -1  0 |   | (rTempZ,iTempZ) |   | (rTempX - rTempZ, iTempX - iTempZ) |
     //          | 0  1  0  j |   | (rTempW,iTempW) |   | (rTempY - iTempW, iTempY + rTempW) |
     //----------------------------------------------------------------------------------
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wattributes"
     __forceinline void ButterflyDIT4_1 (_Inout_ XMVECTOR& r1, _Inout_ XMVECTOR& i1)
     {
         using namespace DirectX;
@@ -122,6 +131,7 @@ namespace XDSP
         r1 = XMVectorMultiplyAdd( rZiWrZiW, vDFT4SignBits2, rTempL );
         i1 = XMVectorMultiplyAdd( iZrWiZrW, vDFT4SignBits3, iTempL );                
     }
+    #pragma GCC diagnostic pop
 
     //----------------------------------------------------------------------------------
     // Radix-4 decimation-in-time FFT butterfly.
@@ -144,6 +154,8 @@ namespace XDSP
     //          | 1  0 -1  0 |   | (rTemp2,iTemp2) |   | (rTemp0 - rTemp2, iTemp0 - iTemp2) |
     //          | 0  1  0  j |   | (rTemp3,iTemp3) |   | (rTemp1 - iTemp3, iTemp1 + rTemp3) |
     //----------------------------------------------------------------------------------
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wattributes"
     __forceinline void ButterflyDIT4_4 (_Inout_ XMVECTOR& r0,
                                         _Inout_ XMVECTOR& r1,
                                         _Inout_ XMVECTOR& r2,
@@ -209,6 +221,7 @@ namespace XDSP
         r2 = rTemp6;    i2 = iTemp6;
         r3 = rTemp7;    i3 = iTemp7;
     }
+    #pragma GCC diagnostic pop
 
     //==================================================================================
     // F-U-N-C-T-I-O-N-S
@@ -223,6 +236,8 @@ namespace XDSP
     //  pImaginary - [inout] imaginary components, must have at least uCount elements
     //  uCount     - [in]    number of FFT iterations
     //----------------------------------------------------------------------------------
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wattributes"
     __forceinline void FFT4(_Inout_updates_(uCount) XMVECTOR* __restrict pReal,
                             _Inout_updates_(uCount) XMVECTOR* __restrict pImaginary,
                             _In_ const size_t uCount=1)
@@ -238,6 +253,7 @@ namespace XDSP
             ButterflyDIT4_1(pReal[uIndex], pImaginary[uIndex]);
         }
     }
+    #pragma GCC diagnostic pop
 
     //----------------------------------------------------------------------------------
     // DESCRIPTION:
@@ -248,6 +264,8 @@ namespace XDSP
     //  pImaginary - [inout] imaginary components, must have at least uCount*2 elements
     //  uCount     - [in]    number of FFT iterations
     //----------------------------------------------------------------------------------
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wattributes"
     __forceinline void FFT8 (_Inout_updates_(uCount*2) XMVECTOR* __restrict pReal,
                              _Inout_updates_(uCount*2) XMVECTOR* __restrict pImaginary,
                              _In_ const size_t uCount=1)
@@ -287,6 +305,7 @@ namespace XDSP
             pI[1] = XMVectorAdd(evensI, i);
         }
     }
+    #pragma GCC diagnostic pop
 
     //----------------------------------------------------------------------------------
     // DESCRIPTION:
@@ -297,6 +316,8 @@ namespace XDSP
     //  pImaginary - [inout] imaginary components, must have at least uCount*4 elements
     //  uCount     - [in]    number of FFT iterations
     //----------------------------------------------------------------------------------
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wattributes"
     __forceinline void FFT16 (_Inout_updates_(uCount*4) XMVECTOR* __restrict pReal,
                               _Inout_updates_(uCount*4) XMVECTOR* __restrict pImaginary,
                               _In_ const size_t uCount=1)
@@ -333,6 +354,7 @@ namespace XDSP
                             1, true);
         }
     }
+    #pragma GCC diagnostic pop
 
     //----------------------------------------------------------------------------------
     // DESCRIPTION:
@@ -663,7 +685,11 @@ namespace XDSP
         }
         else
         {
+            #ifdef __GNUC__
+            memcpy(vRealTemp, pReal, (uLength>>2)*sizeof(XMVECTOR));
+            #else
             memcpy_s(vRealTemp, sizeof(vRealTemp), pReal, (uLength>>2)*sizeof(XMVECTOR));
+            #endif
         }
 
         memset( vImaginaryTemp, 0, (uChannelCount*(uLength>>2)) * sizeof(XMVECTOR) );
@@ -788,7 +814,11 @@ namespace XDSP
         }
         else
         {
+            #ifdef __GNUC__
+            memcpy(pReal, vImaginaryTemp, (uLength>>2)*sizeof(XMVECTOR));
+            #else
             memcpy_s(pReal, uLength*uChannelCount*sizeof(float), vImaginaryTemp, (uLength>>2)*sizeof(XMVECTOR));
+            #endif
         }
     }
 
