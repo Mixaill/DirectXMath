@@ -9,6 +9,15 @@
 
 #pragma once
 
+//ALIGN macro
+#ifndef ALIGN
+#ifdef __GNUC__
+#define ALIGN(x) __attribute__ ((aligned(x)))
+#else
+#define ALIGN(x) __declspec(align(x))
+#endif
+#endif
+
 #if defined(_XM_NO_INTRINSICS_)
 #define XMISNAN(x)  isnan(x)
 #define XMISINF(x)  isinf(x)
@@ -1321,7 +1330,7 @@ inline XMVECTOR XM_CALLCONV XMVectorPermute
 #elif defined(_XM_AVX_INTRINSICS_) && !defined(_XM_NO_INTRINSICS_)
     static const XMVECTORU32 three = { { { 3, 3, 3, 3 } } };
 
-    _declspec(align(16)) unsigned int elem[4] = { PermuteX, PermuteY, PermuteZ, PermuteW };
+    ALIGN(16) unsigned int elem[4] = { PermuteX, PermuteY, PermuteZ, PermuteW };
     __m128i vControl = _mm_load_si128( reinterpret_cast<const __m128i *>(&elem[0]) );
 
     __m128i vSelect = _mm_cmpgt_epi32( vControl, three );
@@ -4139,8 +4148,8 @@ inline XMVECTOR XM_CALLCONV XMVectorPow
         } } };
     return vResult.v;
 #elif defined(_XM_SSE_INTRINSICS_)
-    __declspec(align(16)) float a[4];
-    __declspec(align(16)) float b[4];
+    ALIGN(16) float a[4];
+    ALIGN(16) float b[4];
     _mm_store_ps( a, V1 );
     _mm_store_ps( b, V2 );
     XMVECTOR vResult = _mm_setr_ps(
