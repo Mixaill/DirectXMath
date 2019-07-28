@@ -13,7 +13,9 @@
 
 #include <DirectXMath.h>
 
+#ifdef _WIN32
 #include <winerror.h>
+#endif
 
 namespace DirectX
 {
