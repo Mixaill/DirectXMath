@@ -17,15 +17,18 @@
 #pragma once
 
 #include <assert.h>
-#include <directxmath.h>
+#include <DirectXMath.h>
 
 #pragma warning(push)
 #pragma warning(disable : 4005 4668)
 #include <stdint.h>
+#include <string.h>
 #pragma warning(pop)
 
 #pragma warning(push)
-#pragma warning(disable: 4328 4640 6001 6262)
+#pragma warning(disable: 4068 4328 4640 6001 6262)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wattributes"
 
 namespace XDSP
 {
@@ -663,7 +666,11 @@ namespace XDSP
         }
         else
         {
+            #ifdef __GNUC__
+            memcpy(vRealTemp, pReal, (uLength>>2)*sizeof(XMVECTOR));
+            #else
             memcpy_s(vRealTemp, sizeof(vRealTemp), pReal, (uLength>>2)*sizeof(XMVECTOR));
+            #endif
         }
 
         memset( vImaginaryTemp, 0, (uChannelCount*(uLength>>2)) * sizeof(XMVECTOR) );
@@ -788,10 +795,15 @@ namespace XDSP
         }
         else
         {
+            #ifdef __GNUC__
+            memcpy(pReal, vImaginaryTemp, (uLength>>2)*sizeof(XMVECTOR));
+            #else
             memcpy_s(pReal, uLength*uChannelCount*sizeof(float), vImaginaryTemp, (uLength>>2)*sizeof(XMVECTOR));
+            #endif
         }
     }
 
 } // namespace XDSP
 
+#pragma GCC diagnostic pop
 #pragma warning(pop)
