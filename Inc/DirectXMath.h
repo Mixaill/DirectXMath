@@ -51,7 +51,11 @@
 #define _XM_AVX2_INTRINSICS_
 #endif
 
-#if !defined(_XM_FMA3_INTRINSICS_) && defined(_XM_AVX2_INTRINSICS_) && !defined(_XM_NO_INTRINSICS_)
+#if !defined(_XM_FMA3_INTRINSICS_) && (defined(_XM_AVX2_INTRINSICS_) && !defined(__GNUC__)) && !defined(_XM_NO_INTRINSICS_)
+#define _XM_FMA3_INTRINSICS_
+#endif
+
+#if !defined(_XM_FMA3_INTRINSICS_) && defined(__FMA__) && !defined(_XM_NO_INTRINSICS_)
 #define _XM_FMA3_INTRINSICS_
 #endif
 
@@ -79,7 +83,15 @@
 #define _XM_SSE4_INTRINSICS_
 #endif
 
+#if !defined(_XM_SSE4_INTRINSICS_) && (defined(__SSE4_2__) || defined(__SSE4_1__)) && !defined(_XM_NO_INTRINSICS_)
+#define _XM_SSE4_INTRINSICS_
+#endif
+
 #if defined(_XM_SSE4_INTRINSICS_) && !defined(_XM_SSE3_INTRINSICS_)
+#define _XM_SSE3_INTRINSICS_
+#endif
+
+#if !defined(_XM_SSE3_INTRINSICS_) && defined(__SSE3__) && !defined(_XM_NO_INTRINSICS_)
 #define _XM_SSE3_INTRINSICS_
 #endif
 
@@ -90,7 +102,7 @@
 #if !defined(_XM_ARM_NEON_INTRINSICS_) && !defined(_XM_SSE_INTRINSICS_) && !defined(_XM_NO_INTRINSICS_)
 #if (defined(_M_IX86) || defined(_M_X64) || __i386__ || __x86_64__) && !defined(_M_HYBRID_X86_ARM64)
 #define _XM_SSE_INTRINSICS_
-#elif defined(_M_ARM) || defined(_M_ARM64) || defined(_M_HYBRID_X86_ARM64) || __arm__ || __aarch64__
+#elif (defined(_M_ARM) || defined(_M_ARM64) || defined(_M_HYBRID_X86_ARM64) || __arm__ || __aarch64__) && !defined(__GNUC__)
 #define _XM_ARM_NEON_INTRINSICS_
 #elif !defined(_XM_NO_INTRINSICS_)
 #error DirectX Math does not support this target
